@@ -19,6 +19,7 @@ class edge:
         print(str(self.x.id)+"-"+str(self.y.id))
 
 class route:
-    def __init__(self, edges):
+    def __init__(self, edges, demand = 0):
         self.route = edges
         self.dist = sum([i.dist for i in edges])
+        self.demand = demand
