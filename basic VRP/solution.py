@@ -8,8 +8,8 @@ class algorithm:
 
     def create_saving_list(self):
         saving_list = []
-        for i in range(1, len(self.nodes)):
-            for j in range(i+1, len(self.nodes)-1):
+        for i in range(1, len(self.nodes)-1):
+            for j in range(i+1, len(self.nodes)):
                 edge_i = edge(self.nodes[i], self.nodes[0])
                 edge_j = edge(self.nodes[j], self.nodes[0])
                 edge_i_j = edge(self.nodes[i], self.nodes[j])
@@ -40,6 +40,7 @@ class algorithm:
         if route_1 != route_2 and self.routes[route_1].demand+self.routes[route_2].demand <= self.capacity \
                 and route_1 != -1 and route_2 != -1:
             self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
+            self.routes[route_1].demand = self.routes[route_1].demand + self.routes[route_2].demand
             del self.routes[route_2]
 
     def algo(self):
@@ -48,4 +49,7 @@ class algorithm:
         while len(saving_list) > 0:
             s = saving_list.pop(0)
             self.merge_routes(edge(self.nodes[s[0]], self.nodes[s[1]]))
+
+        for r in self.routes:
+            print(r.__str__())
 
