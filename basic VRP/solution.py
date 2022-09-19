@@ -1,3 +1,5 @@
+import copy
+
 from classes import *
 from plot import plot_sol
 from time import sleep
@@ -27,7 +29,7 @@ class algorithm:
 
         return routes
 
-    def merge_routes(self, edge):
+    def merge_routes(self, edge, verbose_plot = False):
         route_1 = -1
         route_2 = -1
         for i, r in enumerate(self.routes):
@@ -63,7 +65,7 @@ class algorithm:
             self.routes[route_1].demand = self.routes[route_1].demand + self.routes[route_2].demand
             del self.routes[route_2]
 
-        if plot:
+        if plot and verbose_plot:
             plot_sol(self.routes, self.nodes)
 
     def get_saving(self, saving_list):
@@ -79,15 +81,31 @@ class algorithm:
 
     def algo(self):
         self.routes = self.dummy_solution()
-        plot_sol(self.routes, self.nodes)
+        plot_sol(self.routes, self.nodes, verbose_plot=True)
         saving_list = self.create_saving_list()
         saving_list.sort(key=lambda x: x[2], reverse=True)
         while len(saving_list) > 0:
             s = self.get_saving(saving_list)
-            self.merge_routes(edge(self.nodes[s[0]], self.nodes[s[1]]))
+            self.merge_routes(edge(self.nodes[s[0]], self.nodes[s[1]]), verbose_plot=True)
 
+    def multistart_algo(self, time):
+        start = time.time()
+        best_dist = -1
 
+        while time.time() - start < time:
+            self.routes = self.dummy_solution()
+            plot_sol(self.routes, self.nodes)
+            saving_list = self.create_saving_list()
+            saving_list.sort(key=lambda x: x[2], reverse=True)
+            while len(saving_list) > 0:
+                s = self.get_saving(saving_list)
+                self.merge_routes(edge(self.nodes[s[0]], self.nodes[s[1]]))
 
+            if best_dist == -1 or best_dist < sum([i.dist for i in self.routes]):
+                best_dist = sum([i.dist for i in self.routes])
+                best_route = copy.deepcopy(self.routes)
+
+        plot_sol(self.routes, self.nodes)
 
 
 

@@ -12,7 +12,8 @@ if __name__ == '__main__':
 
     sol = algorithm(nodes)
     sol.algo()
-    #plot_sol(sol.routes, nodes)
+
+    # sol.multistart_algo()
 
 
 
