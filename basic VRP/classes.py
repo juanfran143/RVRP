@@ -24,6 +24,12 @@ class route:
         self.dist = sum([i.dist for i in edges])
         self.demand = demand
 
+    def reverse(self):
+        edges = []
+        for i in range(len(self.route)):
+            edges.append(self.route[len(self.route)-i-1])
+        self.route = edges
+
     def __str__(self):
         t = "0"
         for i in self.route:
