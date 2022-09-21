@@ -4,6 +4,7 @@ from classes import *
 from plot import plot_sol
 from time import sleep
 import random as rnd
+import time
 class algorithm:
     def __init__(self, nodes, capacity = 10):
         self.nodes = nodes
@@ -73,28 +74,28 @@ class algorithm:
         # Random
         # saving_list.pop(rnd.randint(0, len(saving_list)-1))
         # GRASP
-        # saving_list.pop(rnd.randint(0, 5))
+        # saving_list.pop(rnd.randint(0, min([5, len(saving_list)-1])))
         # Greedy
         # saving_list.pop(0)
 
-        return saving_list.pop(0)
+        return saving_list.pop(rnd.randint(0, min([5, len(saving_list)-1])))
 
     def algo(self):
         self.routes = self.dummy_solution()
-        plot_sol(self.routes, self.nodes, verbose_plot=True)
+        plot_sol(self.routes, self.nodes)
         saving_list = self.create_saving_list()
         saving_list.sort(key=lambda x: x[2], reverse=True)
         while len(saving_list) > 0:
             s = self.get_saving(saving_list)
             self.merge_routes(edge(self.nodes[s[0]], self.nodes[s[1]]), verbose_plot=True)
 
-    def multistart_algo(self, time):
+    def multistart_algo(self, computing_time):
         start = time.time()
         best_dist = -1
 
-        while time.time() - start < time:
+        while time.time() - start < computing_time:
             self.routes = self.dummy_solution()
-            plot_sol(self.routes, self.nodes)
+            #plot_sol(self.routes, self.nodes)
             saving_list = self.create_saving_list()
             saving_list.sort(key=lambda x: x[2], reverse=True)
             while len(saving_list) > 0:
@@ -105,7 +106,7 @@ class algorithm:
                 best_dist = sum([i.dist for i in self.routes])
                 best_route = copy.deepcopy(self.routes)
 
-        plot_sol(self.routes, self.nodes)
+        plot_sol(best_route, self.nodes)
 
 
 
