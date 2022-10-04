@@ -13,9 +13,11 @@ class algorithm:
 
     def create_saving_list(self):
         saving_list = []
-        for i in range(1, len(self.nodes)-1):
-            for j in range(i+1, len(self.nodes)):
-                edge_i = edge(self.nodes[i], self.nodes[0])
+        for i in range(1, len(self.nodes)):
+            for j in range(1, len(self.nodes)):
+                if i == j:
+                    continue
+                edge_i = edge(self.nodes[0], self.nodes[i])
                 edge_j = edge(self.nodes[j], self.nodes[0])
                 edge_i_j = edge(self.nodes[i], self.nodes[j])
                 saving_list.append((i, j, edge_i.dist+edge_j.dist-edge_i_j.dist))
@@ -43,30 +45,24 @@ class algorithm:
                 break
 
         plot = False
+        merge = False
         if route_1 != route_2 and self.routes[route_1].demand+self.routes[route_2].demand <= self.capacity \
                 and route_1 != -1 and route_2 != -1:
-            if self.routes[route_1].route[0].y.id == edge.x.id and self.routes[route_2].route[0].y.id == edge.y.id:
-                self.routes[route_1].reverse()
-                self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
 
-                plot = True
-
-            elif self.routes[route_1].route[-1].x.id == edge.x.id and self.routes[route_2].route[-1].x.id == edge.y.id:
-                self.routes[route_2].reverse()
-                self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
-                plot = True
-
-            elif self.routes[route_1].route[0].y.id == edge.x.id and self.routes[route_2].route[-1].x.id == edge.y.id:
+            if self.routes[route_1].route[0].y.id == edge.y.id and self.routes[route_2].route[-1].x.id == edge.x.id:
                 self.routes[route_1].route = self.routes[route_2].route[:-1] + [edge] + self.routes[route_1].route[1:]
                 plot = True
+                merge = True
 
-            else:
+            elif self.routes[route_2].route[0].y.id == edge.y.id and self.routes[route_1].route[-1].x.id == edge.x.id:
                 self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
                 plot = True
+                merge = True
 
-            self.routes[route_1].dist = self.routes[route_1].dist - saving + self.routes[route_2].dist
-            self.routes[route_1].demand = self.routes[route_1].demand + self.routes[route_2].demand
-            del self.routes[route_2]
+            if merge:
+                self.routes[route_1].dist = self.routes[route_1].dist - saving + self.routes[route_2].dist
+                self.routes[route_1].demand = self.routes[route_1].demand + self.routes[route_2].demand
+                del self.routes[route_2]
 
         if plot and verbose_plot:
             plot_sol(self.routes, self.nodes)
