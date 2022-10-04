@@ -13,7 +13,7 @@ if __name__ == '__main__':
     sol = algorithm(nodes, n_depots=2)
     # sol.algo()
 
-    sol.multistart_algo(1)
+    sol.multistart_algo(10)
 
 
 
