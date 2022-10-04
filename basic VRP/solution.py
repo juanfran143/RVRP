@@ -30,7 +30,7 @@ class algorithm:
 
         return routes
 
-    def merge_routes(self, edge, verbose_plot = False):
+    def merge_routes(self, edge, saving, verbose_plot = False):
         route_1 = -1
         route_2 = -1
         for i, r in enumerate(self.routes):
@@ -48,11 +48,12 @@ class algorithm:
             if self.routes[route_1].route[0].y.id == edge.x.id and self.routes[route_2].route[0].y.id == edge.y.id:
                 self.routes[route_1].reverse()
                 self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
+
                 plot = True
 
             elif self.routes[route_1].route[-1].x.id == edge.x.id and self.routes[route_2].route[-1].x.id == edge.y.id:
                 self.routes[route_2].reverse()
-                self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] +  self.routes[route_2].route[1:]
+                self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
                 plot = True
 
             elif self.routes[route_1].route[0].y.id == edge.x.id and self.routes[route_2].route[-1].x.id == edge.y.id:
@@ -63,6 +64,7 @@ class algorithm:
                 self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
                 plot = True
 
+            self.routes[route_1].dist = self.routes[route_1].dist - saving + self.routes[route_2].dist
             self.routes[route_1].demand = self.routes[route_1].demand + self.routes[route_2].demand
             del self.routes[route_2]
 
@@ -100,9 +102,9 @@ class algorithm:
             saving_list.sort(key=lambda x: x[2], reverse=True)
             while len(saving_list) > 0:
                 s = self.get_saving(saving_list)
-                self.merge_routes(edge(self.nodes[s[0]], self.nodes[s[1]]))
+                self.merge_routes(edge(self.nodes[s[0]], self.nodes[s[1]]), s[2])
 
-            if best_dist == -1 or best_dist < sum([i.dist for i in self.routes]):
+            if best_dist == -1 or best_dist > sum([i.dist for i in self.routes]):
                 best_dist = sum([i.dist for i in self.routes])
                 best_route = copy.deepcopy(self.routes)
 
