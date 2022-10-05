@@ -15,17 +15,18 @@ def plot_sol(routes, nodos, depots):
 
     for route in routes:
         for i in range(len(route.route)-1):
-            if i == 0 and route.route[i].x.id not in [i for i in range(depots)]:
+            if i == 0 and route.route[i].x.id not in [j for j in range(depots)]:
                route.route[i] = edge(route.route[i].y, route.route[i].x)
-            if i == len(route.route)-1 and route.route[i].y.id not in [i for i in range(depots)]:
+            if i == len(route.route)-1 and route.route[i].y.id not in [j for j in range(depots)]:
                 route.route[i] = edge(route.route[i].x, route.route[i].y)
             if route.route[i].y.id != route.route[i+1].x.id:
                 route.route[i + 1] = edge(route.route[i + 1].y, route.route[i + 1].x)
 
 
-    x = []
-    y = []
+
     for r in routes:
+        x = []
+        y = []
         for e in r.route:
             x.append(e.x.x)
             y.append(e.x.y)
@@ -33,7 +34,8 @@ def plot_sol(routes, nodos, depots):
             x.append(e.y.x)
             y.append(e.y.y)
 
-    plt.plot(x, y)
+        plt.plot(x, y)
+
     text = "The distance is: "+str(sum([i.dist for i in routes]))
     for i,route in enumerate(routes):
         text += "\n" + "Route "+ str(i+1)+ ": " + route.__str__()

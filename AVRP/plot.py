@@ -1,31 +1,66 @@
 
-from matplotlib import pyplot
 import matplotlib.pyplot as plt
 from classes import *
+import pylab as pl
+import numpy as np
+
+def add_arrow(line, position=None, direction='right', size=15, color=None):
+    """
+    add an arrow to a line.
+
+    line:       Line2D object
+    position:   x-position of the arrow. If None, mean of xdata is taken
+    direction:  'left' or 'right'
+    size:       size of the arrow in fontsize points
+    color:      if None, line color is taken.
+    """
+    if color is None:
+        color = line.get_color()
+
+    xdata = line.get_xdata()
+    ydata = line.get_ydata()
+
+    if position is None:
+        position = xdata.mean()
+    # find closest index
+    start_ind = np.argmin(np.absolute(xdata - position))
+    if direction == 'right':
+        end_ind = start_ind + 1
+    else:
+        end_ind = start_ind - 1
+
+    line.axes.annotate('',
+        xytext=(xdata[start_ind], ydata[start_ind]),
+        xy=(xdata[end_ind], ydata[end_ind]),
+        arrowprops=dict(arrowstyle="->", color=color),
+        size=size
+    )
 
 def plot_sol(routes, nodos):
 
-    plt.plot(nodos[0].x, nodos[0].y, 'go', linestyle='dashed',
-     linewidth=8, markersize=12)
+    for i in range(1):
+        plt.plot(nodos[i].x, nodos[i].y, 'go', linestyle='dashed', linewidth=8, markersize=12)
+        pl.text(nodos[i].x+0.125,  nodos[i].y+0.125, str( nodos[i].id), color="red", fontsize=12)
     for i in nodos[1:]:
         plt.plot(i.x, i.y, "bo")
+        pl.text(i.x + 0.125, i.y + 0.125, str(i.id), color="red", fontsize=12)
 
-    for route in routes:
-        for i in range(len(route.route)-1):
-            if route.route[i].y.id != route.route[i+1].x.id:
-                route.route[i + 1] = edge(route.route[i + 1].y, route.route[i + 1].x)
-
-
-    x = []
-    y = []
     for r in routes:
         for e in r.route:
+            x = []
+            y = []
             x.append(e.x.x)
             y.append(e.x.y)
 
             x.append(e.y.x)
             y.append(e.y.y)
 
-    plt.plot(x, y)
-    plt.title("The distance is: "+str(sum([i.dist for i in routes])))
+            line = plt.plot(x, y)[0]
+            add_arrow(line)
+
+
+    text = "The distance is: "+str(sum([i.dist for i in routes]))
+    for i,route in enumerate(routes):
+        text += "\n" + "Route "+ str(i+1)+ ": " + route.__str__()
+    plt.title(text, fontsize=8)
     plt.show()

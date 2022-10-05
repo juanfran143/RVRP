@@ -27,7 +27,7 @@ class route:
     def reverse(self):
         edges = []
         for i in range(len(self.route)):
-            edges.append(self.route[len(self.route)-i-1])
+            edges.append(edge(self.route[len(self.route)-i-1].y, self.route[len(self.route)-i-1].x))
         self.route = edges
 
     def __str__(self):
