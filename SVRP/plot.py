@@ -29,3 +29,25 @@ def plot_sol(routes, nodos):
         text += "\n" + "Route "+ str(i+1)+ ": " + route.__str__()
     plt.title(text, fontsize=8)
     plt.show()
+
+
+def plot_boxplot(best_dist, lim = 5):
+    import matplotlib.pyplot as plt
+    data = [i[2] for i in best_dist[0:min([lim, len(best_dist)])]]
+    fig, ax = plt.subplots()
+
+    bp = ax.boxplot(data, patch_artist=True)
+
+    colors = ['#0000FF', '#00FF00',
+              '#FFFF00', '#FF00FF']
+
+    for patch, color in zip(bp['boxes'], colors):
+        patch.set_facecolor(color)
+
+    for median in bp['medians']:
+        median.set(color='red',
+                   linewidth=3)
+
+    ax.set_xticklabels(["Route "+str(i+1) for i in range(min([lim, len(best_dist)]))])
+
+    plt.show()
