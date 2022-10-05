@@ -108,13 +108,14 @@ class algorithm:
 
             distances, fail = short_simulation.simulation(self.routes, self.capacity)
 
-            if len(best_dist) == 0 or best_dist[-1] > np.mean(distances):
-                best_dist[-1] = np.mean(distances)
-                best_route[-1] = copy.deepcopy(self.routes)
-                best_dist = best_dist.sort()
-                best_route = best_route.sort()
+            if len(best_dist) == 0 or best_dist[0][0] > np.mean(distances):
+                best_dist.append((np.mean(distances), copy.deepcopy(self.routes)))
+                #best_route.append(copy.deepcopy(self.routes))
 
-        plot_sol(best_route, self.nodes)
+                best_dist.sort(key=lambda x: x[0])
+                #best_route.sort()
+
+        plot_sol(best_dist[0][1], self.nodes)
 
 
 
