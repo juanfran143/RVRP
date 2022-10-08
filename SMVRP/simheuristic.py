@@ -47,6 +47,7 @@ class Simheuristic:
                         demand = aux
                         distance += (edge(selected_edge.x, route.route[0].x)).dist + (edge(route.route[0].x, selected_edge.y)).dist - selected_edge.dist
                         if first:
+                            first = False
                             fail += 1
 
             distances.append(distance)

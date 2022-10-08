@@ -1,21 +1,22 @@
 import copy
 
-import numpy as np
-
 from classes import *
 from plot import plot_sol, plot_boxplot
 from time import sleep
 import random as rnd
 import time
+import numpy as np
+
 class algorithm:
-    def __init__(self, nodes, capacity = 10):
+    def __init__(self, nodes, capacity = 10, n_depots = 1):
+        self.n_depots = n_depots
         self.nodes = nodes
         self.routes = []
         self.capacity = capacity
 
     def create_saving_list(self):
         saving_list = []
-        for i in range(1, len(self.nodes)-1):
+        for i in range(self.n_depots, len(self.nodes)-1):
             for j in range(i+1, len(self.nodes)):
                 edge_i = edge(self.nodes[i], self.nodes[0])
                 edge_j = edge(self.nodes[j], self.nodes[0])
@@ -28,6 +29,21 @@ class algorithm:
         routes = []
         for i in range(1, len(self.nodes)):
             routes.append(route([edge(self.nodes[0], self.nodes[i]), edge(self.nodes[i], self.nodes[0])],
+                                demand = self.nodes[i].demand))
+
+        return routes
+
+    def dummy_solution_multidepot(self):
+        routes = []
+        for i in range(self.n_depots, len(self.nodes)):
+            dist = []
+            for j in range(self.n_depots):
+                dist.append((j, ((self.nodes[j].x - self.nodes[i].x) ** 2 + (self.nodes[j].y - self.nodes[i].y) ** 2) ** (1 / 2)))
+
+            dist.sort(key=lambda x: x[1])
+            selected = rnd.randint(0, min([len(dist), 1]))
+
+            routes.append(route([edge(self.nodes[selected], self.nodes[i]), edge(self.nodes[i], self.nodes[selected])],
                                 demand = self.nodes[i].demand))
 
         return routes
@@ -46,11 +62,11 @@ class algorithm:
 
         plot = False
         if route_1 != route_2 and self.routes[route_1].demand+self.routes[route_2].demand <= self.capacity \
-                and route_1 != -1 and route_2 != -1:
+                and route_1 != -1 and route_2 != -1 and self.routes[route_1].route[0].x.id == self.routes[route_2].route[0].x.id:
+            
             if self.routes[route_1].route[0].y.id == edge.x.id and self.routes[route_2].route[0].y.id == edge.y.id:
                 self.routes[route_1].reverse()
                 self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
-
                 plot = True
 
             elif self.routes[route_1].route[-1].x.id == edge.x.id and self.routes[route_2].route[-1].x.id == edge.y.id:
@@ -97,7 +113,7 @@ class algorithm:
         start = time.time()
         best_dist = []
         while time.time() - start < computing_time:
-            self.routes = self.dummy_solution()
+            self.routes = self.dummy_solution_multidepot()
             #plot_sol(self.routes, self.nodes)
             saving_list = self.create_saving_list()
             saving_list.sort(key=lambda x: x[2], reverse=True)
@@ -112,7 +128,6 @@ class algorithm:
                 #best_route.append(copy.deepcopy(self.routes))
 
                 best_dist.sort(key=lambda x: x[0])
-                #best_route.sort()
 
         for i in range(5):
             distances, fail = long_simulation.simulation(best_dist[i][1], self.capacity)
@@ -124,10 +139,7 @@ class algorithm:
 
         plot_boxplot(best_dist, lim=5)
         for i in range(5):
-            plot_sol(best_dist[i][1], self.nodes, fail = best_dist[i][3])
-
-
-
+            plot_sol(best_dist[i][1], self.nodes, self.n_depots, fail = best_dist[i][3])
 
 
 
