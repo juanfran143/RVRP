@@ -5,7 +5,7 @@ The objective is to arrive at a problem as rich as the user indicates. Metaheuri
 The following problems have been solved so far:
 + Static problems:
   - Vehicle Routing Problem (VRP): This is the most basic problem where there is no major restriction other than not exceeding the capacity of the truck, as well as not revisiting customers.
-  ![alt text](https://github.com/juanfran143/RVRP/tree/main/Figure/VRP.png?raw=true)
+  ![My Image](tree/main/Figure/VRP.png?raw=true)
   - Arc Vehicle Routing Problem (AVRP): The basis of the problem is the VRP, however in this problem you have arcs. The arcs are directional, i.e., the distance between the same pair of nodes does not have to be the same.
   - Multidepot Vehicle Routing Problem (MVRP): The basis of the problem is the VRP, however in this problem you have different depots from which different trucks can depart.
 + Stochastic problems:
