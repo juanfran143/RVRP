@@ -1,4 +1,5 @@
 import copy
+import random
 
 from classes import *
 from plot import plot_sol
@@ -6,10 +7,12 @@ from time import sleep
 import random as rnd
 import time
 class algorithm:
-    def __init__(self, nodes, capacity = 10):
+    def __init__(self, nodes, capacity=10, start_hour=9, prob_esperar = 0.7):
         self.nodes = nodes
         self.routes = []
         self.capacity = capacity
+        self.start_hour = start_hour
+        self.prob_esperar = prob_esperar
 
     def create_saving_list(self):
         saving_list = []
@@ -27,8 +30,14 @@ class algorithm:
     def dummy_solution(self):
         routes = []
         for i in range(1, len(self.nodes)):
-            routes.append(route([edge(self.nodes[0], self.nodes[i]), edge(self.nodes[i], self.nodes[0])],
+            start_edge = edge(self.nodes[0], self.nodes[i])
+            end_edge = edge(self.nodes[i], self.nodes[0])
+            routes.append(route([start_edge, end_edge],
                                 demand = self.nodes[i].demand))
+            if start_edge.time + self.start_hour < self.nodes[i].min_interval:
+                routes[-1].time = self.nodes[i].min_interval + end_edge.time
+            else:
+                routes[-1].time += self.start_hour
 
         return routes
 
@@ -50,17 +59,54 @@ class algorithm:
                 and route_1 != -1 and route_2 != -1:
 
             if self.routes[route_1].route[0].y.id == edge.y.id and self.routes[route_2].route[-1].x.id == edge.x.id:
-                self.routes[route_1].route = self.routes[route_2].route[:-1] + [edge] + self.routes[route_1].route[1:]
-                plot = True
-                merge = True
+                time = self.routes[route_2].time - self.routes[route_2].route[-1].time + edge.time
+                fail = False
+                if edge.y.max_interval < time or time < edge.y.min_interval:
+                    if time < edge.y.min_interval and random.random()<self.prob_esperar:
+                        time = edge.y.min_interval
+                    else:
+                        fail = True
+                for i in self.routes[route_1].route[1:]:
+                    if fail:
+                        break
+                    time += i.time
+                    if i.x.max_interval < time or time < i.x.min_interval:
+                        if time < i.x.min_interval and random.random() < self.prob_esperar:
+                            time = i.x.min_interval
+                        else:
+                            fail = True
+
+                if not fail:
+                    self.routes[route_1].route = self.routes[route_2].route[:-1] + [edge] + self.routes[route_1].route[1:]
+                    plot = True
+                    merge = True
 
             elif self.routes[route_2].route[0].y.id == edge.y.id and self.routes[route_1].route[-1].x.id == edge.x.id:
-                self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
-                plot = True
-                merge = True
+                time = self.routes[route_1].time - self.routes[route_1].route[-1].time + edge.time
+                fail = False
+                if edge.y.max_interval < time or time < edge.y.min_interval:
+                    if time < edge.y.min_interval and random.random() < self.prob_esperar:
+                        time = edge.y.min_interval
+                    else:
+                        fail = True
+                for i in self.routes[route_2].route[1:]:
+                    if fail:
+                        break
+                    time += i.time
+                    if i.x.max_interval < time or time < i.x.min_interval:
+                        if time < i.x.min_interval and random.random() < self.prob_esperar:
+                            time = i.x.min_interval
+                        else:
+                            fail = True
+
+                if not fail:
+                    self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
+                    plot = True
+                    merge = True
 
             if merge:
                 self.routes[route_1].dist = self.routes[route_1].dist - saving + self.routes[route_2].dist
+                self.routes[route_1].time = time
                 self.routes[route_1].demand = self.routes[route_1].demand + self.routes[route_2].demand
                 del self.routes[route_2]
 
