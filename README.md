@@ -15,8 +15,11 @@ The following problems have been solved so far:
 ![TWVRP](https://user-images.githubusercontent.com/82934982/195342778-3408c455-6230-4a8a-8f37-6bf47069a1ae.png)
 + Stochastic problems:
   - SVRP: This is the most basic problem where there is no major restriction other than not exceeding the capacity of the truck, as well as not revisiting customers. Analysis example:
+  
   ![SVRP](https://user-images.githubusercontent.com/82934982/194710643-2d6cfcc4-c7ef-410b-88fc-ba553ed33be0.png) 
+  
   - Stochastic Multidepot Vehicle Routing Problem (SMVRP):     .Analysis example:
+  
   ![SMVRP](https://user-images.githubusercontent.com/82934982/194710649-845c2313-e7b8-461e-91cc-d6802b0ff12c.png)
 
 Linkedin pages:
