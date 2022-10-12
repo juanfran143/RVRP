@@ -45,6 +45,11 @@ def plot_sol(routes, nodos):
         plt.plot(i.x, i.y, "bo")
         pl.text(i.x + 0.125, i.y + 0.125, str(i.id), color="red", fontsize=12)
 
+    for i in nodos[1:]:
+        plt.plot(i.x, i.y, "bo")
+        text = "["+str(i.min_interval)+ ","+ str(i.max_interval)+"]"
+        pl.text(i.x-0.25, i.y - 0.35, text, color="green", fontsize=8)
+
     for r in routes:
         for e in r.route:
             x = []
