@@ -58,52 +58,7 @@ class algorithm:
         if route_1 != route_2 and self.routes[route_1].demand+self.routes[route_2].demand <= self.capacity \
                 and route_1 != -1 and route_2 != -1:
 
-            #TODO (investigar si está bien)
-            if self.routes[route_1].route[0].y.id == edge.x.id and \
-                    self.routes[route_2].route[0].y.id == edge.y.id:
-                self.routes[route_1].reverse()
-                time = self.start_hour
-                fail = False
-                for i in self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]:
-                    time += i.time
-                    if time < i.y.min_interval:
-                        time = i.y.min_interval
-                    if time > i.y.max_interval:
-                        fail = True
-                        self.routes[route_1].reverse()
-                        break
-
-                if not fail:
-                    self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + \
-                                                 self.routes[route_2].route[1:]
-                    plot = True
-                    merge = True
-
-            if self.routes[route_1].route[-1].x.id == edge.x.id and self.routes[route_2].route[-1].x.id == edge.y.id:
-
-                # TODO (investigar si está bien)
-                if self.routes[route_1].route[0].y.id == edge.x.id and \
-                        self.routes[route_2].route[0].y.id == edge.y.id:
-                    self.routes[route_2].reverse()
-                    time = self.routes[route_2].time - self.routes[route_2].route[-1].time
-                    fail = False
-                    for i in [edge] + self.routes[route_2].route[1:]:
-                        time += i.time
-                        if time < i.y.min_interval:
-                            time = i.y.min_interval
-                        if time > i.y.max_interval:
-                            fail = True
-                            self.routes[route_2].reverse()
-                            break
-
-                    if not fail:
-                        self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + \
-                                                     self.routes[route_2].route[1:]
-                        plot = True
-                        merge = True
-
-
-            elif self.routes[route_1].route[0].y.id == edge.y.id and self.routes[route_2].route[-1].x.id == edge.x.id:
+            if self.routes[route_1].route[0].y.id == edge.y.id and self.routes[route_2].route[-1].x.id == edge.x.id:
                 time = self.routes[route_2].time - self.routes[route_2].route[-1].time + edge.time
                 fail = False
                 if edge.y.max_interval < time or time < edge.y.min_interval:
