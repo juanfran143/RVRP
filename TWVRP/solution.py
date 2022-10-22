@@ -58,7 +58,6 @@ class algorithm:
         if route_1 != route_2 and self.routes[route_1].demand+self.routes[route_2].demand <= self.capacity \
                 and route_1 != -1 and route_2 != -1:
 
-            #TODO (investigar si está bien)
             if self.routes[route_1].route[0].y.id == edge.x.id and \
                     self.routes[route_2].route[0].y.id == edge.y.id:
                 self.routes[route_1].reverse()
@@ -81,7 +80,6 @@ class algorithm:
 
             if self.routes[route_1].route[-1].x.id == edge.x.id and self.routes[route_2].route[-1].x.id == edge.y.id:
 
-                # TODO (investigar si está bien)
                 if self.routes[route_1].route[0].y.id == edge.x.id and \
                         self.routes[route_2].route[0].y.id == edge.y.id:
                     self.routes[route_2].reverse()
