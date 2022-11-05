@@ -1,9 +1,11 @@
+from get_problem.main import streats
 
 class node:
-    def __init__(self, id, x, y, demand):
+    def __init__(self, id, x=0, y=0, demand=0, street = ""):
         self.id = id
         self.x = x
         self.y = y
+        self.street = street
         self.demand = demand
 
     def __str__(self):
@@ -13,10 +15,13 @@ class edge:
     def __init__(self, node_x, node_y):
         self.x = node_x
         self.y = node_y
-        if node_x.id > node_y.id:
-            self.dist = ((node_x.x - node_y.x)**2 + (node_x.y - node_y.y)**2)**(1/2)
+        if node_x.street != "":
+            self.dist = streats(node_x.street, node_y.street)
         else:
-            self.dist = (((node_x.x - node_y.x) ** 2 + (node_x.y - node_y.y) ** 2) ** (1 / 2)) * (1.1)
+            if node_x.id > node_y.id:
+                self.dist = ((node_x.x - node_y.x)**2 + (node_x.y - node_y.y)**2)**(1/2)
+            else:
+                self.dist = (((node_x.x - node_y.x) ** 2 + (node_x.y - node_y.y) ** 2) ** (1 / 2)) * (1.1)
 
     def __str__(self):
         return str(self.x.id)+"-"+str(self.y.id)
