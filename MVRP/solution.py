@@ -6,9 +6,10 @@ from time import sleep
 import random as rnd
 import time
 class algorithm:
-    def __init__(self, nodes, capacity = 10, n_depots = 1):
-        self.n_depots = n_depots
+
+    def __init__(self, nodes, capacity=10, n_depots = 1):
         self.nodes = nodes
+        self.n_depots = n_depots
         self.routes = []
         self.capacity = capacity
 
@@ -16,20 +17,13 @@ class algorithm:
         saving_list = []
         for i in range(self.n_depots, len(self.nodes)-1):
             for j in range(i+1, len(self.nodes)):
-                edge_i = edge(self.nodes[i], self.nodes[0])
-                edge_j = edge(self.nodes[j], self.nodes[0])
-                edge_i_j = edge(self.nodes[i], self.nodes[j])
-                saving_list.append((i, j, edge_i.dist+edge_j.dist-edge_i_j.dist))
+                if self.nodes[i].depot == self.nodes[j].depot:
+                    edge_i = edge(self.nodes[i], self.nodes[self.nodes[i].depot])
+                    edge_j = edge(self.nodes[j], self.nodes[self.nodes[i].depot])
+                    edge_i_j = edge(self.nodes[i], self.nodes[j])
+                    saving_list.append((i, j, edge_i.dist+edge_j.dist-edge_i_j.dist))
 
         return saving_list
-
-    def dummy_solution(self):
-        routes = []
-        for i in range(1, len(self.nodes)):
-            routes.append(route([edge(self.nodes[0], self.nodes[i]), edge(self.nodes[i], self.nodes[0])],
-                                demand = self.nodes[i].demand))
-
-        return routes
 
     def dummy_solution_multidepot(self):
         routes = []
@@ -41,6 +35,7 @@ class algorithm:
             dist.sort(key=lambda x: x[1])
             selected = rnd.randint(0, min([len(dist), 1]))
 
+            self.nodes[i].depot = selected
             routes.append(route([edge(self.nodes[selected], self.nodes[i]), edge(self.nodes[i], self.nodes[selected])],
                                 demand = self.nodes[i].demand))
 
