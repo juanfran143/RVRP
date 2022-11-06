@@ -37,7 +37,7 @@ class route:
         self.route = edges
 
     def __str__(self):
-        t = "0"
+        t = str(self.route[0].x.id)
         for i in self.route:
             t += "-" + str(i.y.id)
 

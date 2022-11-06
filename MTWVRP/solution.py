@@ -35,15 +35,24 @@ class algorithm:
                 dist.append((j, ((self.nodes[j].x - self.nodes[i].x) ** 2 + (self.nodes[j].y - self.nodes[i].y) ** 2) ** (1 / 2)))
 
             dist.sort(key=lambda x: x[1])
-            selected = rnd.randint(0, min([len(dist), 1]))
+            selected = rnd.randint(0, min([len(dist)-1, 1]))
 
             self.nodes[i].depot = selected
-            routes.append(route([edge(self.nodes[selected], self.nodes[i]), edge(self.nodes[i], self.nodes[selected])],
+
+            start_edge = edge(self.nodes[selected], self.nodes[i])
+            end_edge = edge(self.nodes[i], self.nodes[selected])
+            routes.append(route([start_edge, end_edge],
                                 demand = self.nodes[i].demand))
+
+            if start_edge.time + self.start_hour < self.nodes[i].min_interval:
+                routes[-1].time = self.nodes[i].min_interval + end_edge.time
+            else:
+                routes[-1].time += self.start_hour
+
 
         return routes
 
-    def merge_routes(self, edge, saving, verbose_plot = False):
+    def merge_routes(self, edge, saving, verbose_plot=False):
         route_1 = -1
         route_2 = -1
         for i, r in enumerate(self.routes):
@@ -57,7 +66,7 @@ class algorithm:
 
         plot = False
         merge = False
-        if route_1 != route_2 and self.routes[route_1].demand+self.routes[route_2].demand <= self.capacity \
+        if route_1 != route_2 and self.routes[route_1].demand + self.routes[route_2].demand <= self.capacity \
                 and route_1 != -1 and route_2 != -1:
 
             if self.routes[route_1].route[0].y.id == edge.x.id and \
@@ -107,7 +116,7 @@ class algorithm:
                 time = self.routes[route_2].time - self.routes[route_2].route[-1].time + edge.time
                 fail = False
                 if edge.y.max_interval < time or time < edge.y.min_interval:
-                    if time < edge.y.min_interval and random.random()<self.prob_esperar:
+                    if time < edge.y.min_interval and random.random() < self.prob_esperar:
                         time = edge.y.min_interval
                     else:
                         fail = True
@@ -122,7 +131,8 @@ class algorithm:
                             fail = True
 
                 if not fail:
-                    self.routes[route_1].route = self.routes[route_2].route[:-1] + [edge] + self.routes[route_1].route[1:]
+                    self.routes[route_1].route = self.routes[route_2].route[:-1] + [edge] + self.routes[route_1].route[
+                                                                                            1:]
                     plot = True
                     merge = True
 
@@ -145,7 +155,8 @@ class algorithm:
                             fail = True
 
                 if not fail:
-                    self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[1:]
+                    self.routes[route_1].route = self.routes[route_1].route[:-1] + [edge] + self.routes[route_2].route[
+                                                                                            1:]
                     plot = True
                     merge = True
 
